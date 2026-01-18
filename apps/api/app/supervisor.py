@@ -8,7 +8,7 @@ with mandatory 2-step confirmation.
 import os
 import re
 import httpx
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
@@ -171,8 +171,29 @@ class ExecuteResponse(BaseModel):
     status: str  # "ok", "error"
     language: str
     message: str
-    result: Optional[dict] = None
+    result: Optional[dict[str, Any]] = None
     error: Optional[str] = None
+
+
+# -----------------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------------
+
+def normalize_result(raw_result: Any) -> dict[str, Any]:
+    """
+    Normalize MCP result to always return a dict.
+    - list → {"items": list}
+    - dict → dict as-is
+    - scalar → {"value": scalar}
+    - None → {}
+    """
+    if raw_result is None:
+        return {}
+    if isinstance(raw_result, list):
+        return {"items": raw_result}
+    if isinstance(raw_result, dict):
+        return raw_result
+    return {"value": raw_result}
 
 
 # -----------------------------------------------------------------------------
@@ -368,12 +389,16 @@ async def execute_plan(request: ExecuteRequest, user: dict = Depends(require_adm
             message="",
             error=mcp_result.get("error", "Execution failed"),
         )
-    
+
+    # Normalize result to always be a dict
+    raw_result = mcp_result.get("result")
+    normalized = normalize_result(raw_result)
+
     return ExecuteResponse(
         status="ok",
         language=lang,
         message=t["success"],
-        result=mcp_result.get("result"),
+        result=normalized,
     )
 
 
