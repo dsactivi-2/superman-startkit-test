@@ -207,6 +207,60 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - SLACK_SIGNING_SECRET (required)
 - SLACK_BOT_TOKEN (optional, für Replies)
 
+#### Tests ✅
+- Health: ok
+- URL Verification: challenge returned
+- Event → Job erstellt
+- Job in /jobs mit Slack-Payload
+
+#### Commit + Push ✅
+- Commit: `5c39117`
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
+
+---
+
+### 2026-01-18 - GitHub App Integration Session
+
+**Status: IN PROGRESS**
+
+#### Neue Dateien:
+- `apps/api/app/github_integration.py` - GitHub Webhook + Actions
+- `DEPLOY/GITHUB_APP_SETUP.md` - Setup Anleitung
+
+#### Geänderte Dateien:
+- `apps/api/app/main.py` - github_router eingebunden
+- `apps/api/requirements.txt` - PyJWT, cryptography hinzugefügt
+- `CONTRACTS/api_contract.md` - GitHub Endpoints dokumentiert
+- `.env.example` - GitHub env vars hinzugefügt
+- `docker-compose.yml` - GitHub env vars weitergeleitet
+
+#### Endpoints:
+- `POST /integrations/github/webhook` - Webhook mit Signatur-Prüfung
+- `POST /integrations/github/actions/comment` - Kommentar hinzufügen (admin)
+- `POST /integrations/github/actions/label` - Labels hinzufügen (admin)
+
+#### Features:
+- Webhook Signatur-Verifizierung (X-Hub-Signature-256, HMAC-SHA256)
+- GitHub App JWT Erstellung (RS256)
+- Installation Token abrufen
+- Events: pull_request, issues, ping
+- Job-Erstellung aus PR/Issue Events
+
+#### Environment Variables:
+- GITHUB_WEBHOOK_SECRET (required für Webhook)
+- GITHUB_APP_ID (required für Actions)
+- GITHUB_APP_PRIVATE_KEY_PEM oder _PATH
+- GITHUB_INSTALLATION_ID
+- GITHUB_API_BASE (optional)
+
+#### Security:
+- Keine Secrets geloggt
+- Private Key nur aus ENV
+- Signatur-Prüfung vor JSON-Parsing
+- Timeouts auf API Calls (10s)
+
 #### Nächste Schritte:
 - Docker rebuild + Tests
 - Commit + Push

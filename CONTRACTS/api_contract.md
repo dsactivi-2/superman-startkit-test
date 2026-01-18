@@ -43,3 +43,35 @@ POST /integrations/slack/events
 ### Environment Variables
 - `SLACK_SIGNING_SECRET` - Required for signature verification
 - `SLACK_BOT_TOKEN` - Optional, for posting replies
+
+## GitHub Integration
+
+POST /integrations/github/webhook (public)
+- GitHub App webhook endpoint
+- Headers: X-Hub-Signature-256, X-GitHub-Event
+- Signature verification with HMAC-SHA256
+- Response: { "ok": true, "job_id": "..." }
+- Errors: 401 (invalid signature), 500 (not configured)
+
+### Supported Events
+- `pull_request` (actions: opened, reopened, synchronize) - Creates job
+- `issues` (actions: opened, reopened) - Creates job
+- `ping` - Acknowledges webhook setup
+
+POST /integrations/github/actions/comment (auth)
+- Add comment to GitHub issue/PR
+- input: { "repo": "org/repo", "issue_number": 123, "body": "text" }
+- output: { "ok": true, "comment_id": 123 }
+- errors: 401, 500 (not configured), 502 (GitHub API error)
+
+POST /integrations/github/actions/label (auth)
+- Add labels to GitHub issue/PR
+- input: { "repo": "org/repo", "issue_number": 123, "labels": ["label1"] }
+- output: { "ok": true, "labels": ["label1"] }
+- errors: 401, 500, 502
+
+### Environment Variables
+- `GITHUB_WEBHOOK_SECRET` - Required for webhook signature
+- `GITHUB_APP_ID` - Required for API actions
+- `GITHUB_APP_PRIVATE_KEY_PEM` - Required (or GITHUB_APP_PRIVATE_KEY_PATH)
+- `GITHUB_INSTALLATION_ID` - Required for API actions
