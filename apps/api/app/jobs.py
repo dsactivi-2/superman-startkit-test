@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime, timezone
 from typing import Optional, Literal
@@ -107,9 +108,15 @@ def reject_job(job_id: str, user: dict = Depends(require_admin)):
     return job
 
 
+def _test_endpoints_enabled() -> bool:
+    return os.getenv("ENABLE_TEST_ENDPOINTS", "false").lower() == "true"
+
+
 @router.post("/{job_id}/set-needs-approval", response_model=JobOut)
 def set_needs_approval(job_id: str, user: dict = Depends(require_admin)):
     """[TEST] Set job status to 'needs_approval' for testing approve/reject."""
+    if not _test_endpoints_enabled():
+        raise HTTPException(status_code=404, detail="Not found")
     job = _jobs.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")

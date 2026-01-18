@@ -149,5 +149,27 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - `/jobs` → HTTP 200
 - Jobs-Seite lädt korrekt
 
+#### Commit + Push ✅
+- Commit: `143b141`
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
+
+---
+
+### 2026-01-18 - Test Endpoint Security
+
+**Status: IN PROGRESS**
+
+#### Änderungen:
+- `jobs.py`: Test-Endpoint prüft ENABLE_TEST_ENDPOINTS env var
+- `.env.example`: ENABLE_TEST_ENDPOINTS=false hinzugefügt
+- `docker-compose.yml`: ENABLE_TEST_ENDPOINTS weitergegeben (default: false)
+
+#### Verhalten:
+- ENABLE_TEST_ENDPOINTS=true → Endpoint verfügbar
+- ENABLE_TEST_ENDPOINTS=false/nicht gesetzt → 404 "Not found"
+
 #### Nächste Schritte:
+- Docker restart + Test
 - Commit + Push
