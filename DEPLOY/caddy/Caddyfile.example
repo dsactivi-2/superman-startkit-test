@@ -1,0 +1,7 @@
+app.deinedomain.tld {
+  reverse_proxy localhost:3000
+}
+
+api.deinedomain.tld {
+  reverse_proxy localhost:8000
+}

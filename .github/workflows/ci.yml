@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Basic file presence
+        run: |
+          test -f MASTER_RUNBOOK.md
+          test -f PROJECT_STATE.md
+          test -f CONTRACTS/api_contract.md
+          test -f CONTRACTS/data_contract.md
+          test -f FUNCTION_REGISTRY.md
+          test -f TEST_PLAN.md
+          echo "OK"
