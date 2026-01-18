@@ -17,7 +17,29 @@ GET /jobs (auth)
 GET /jobs/{id} (auth)
 POST /jobs/{id}/approve (auth) input { "approve": true, "comment": "string" }
 
-## Slack (MVP)
-- Request verification mit Signing Secret
-- Job-Erstellung aus Slash/Mention
-- Progress Events in Thread
+POST /jobs (auth)
+- input: { "title": "string", "payload": {} }
+- output: { "id": "string", "title": "string", "status": "queued", ... }
+- errors: 400, 401
+
+POST /jobs/{id}/reject (auth)
+- output: { ... job with status "rejected" }
+- errors: 400 (wrong status), 401, 404
+
+## Slack Integration
+
+POST /integrations/slack/events
+- Slack Events API endpoint
+- Headers: X-Slack-Request-Timestamp, X-Slack-Signature
+- URL Verification: { "type": "url_verification", "challenge": "..." } -> { "challenge": "..." }
+- Event Callback: { "type": "event_callback", "event": { "type": "app_mention", ... } }
+- Response: { "ok": true, "job_id": "..." }
+- Errors: 401 (invalid signature), 400 (invalid JSON)
+
+### Supported Events
+- `app_mention` - Creates job when @bot is mentioned
+- `message` - Creates job for direct messages
+
+### Environment Variables
+- `SLACK_SIGNING_SECRET` - Required for signature verification
+- `SLACK_BOT_TOKEN` - Optional, for posting replies

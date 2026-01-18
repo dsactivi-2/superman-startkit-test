@@ -170,6 +170,43 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - ENABLE_TEST_ENDPOINTS=true → Endpoint verfügbar
 - ENABLE_TEST_ENDPOINTS=false/nicht gesetzt → 404 "Not found"
 
+#### Test ✅
+- Endpoint liefert 404 "Not found" wenn disabled
+
+#### Commit + Push ✅
+- Commit: `1a8fac5`
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
+
+---
+
+### 2026-01-18 - Slack Job Intake Session
+
+**Status: IN PROGRESS**
+
+#### Neue Dateien:
+- `apps/api/app/slack.py` - Slack Events Handler
+- `DEPLOY/SLACK_SETUP.md` - Setup Anleitung
+
+#### Geänderte Dateien:
+- `apps/api/app/jobs.py` - `create_job_internal()` hinzugefügt
+- `apps/api/app/main.py` - slack_router eingebunden
+- `CONTRACTS/api_contract.md` - Slack Endpoint dokumentiert
+
+#### Features:
+- POST /integrations/slack/events
+- URL Verification (challenge response)
+- Slack Signatur-Verifizierung (HMAC-SHA256)
+- Replay Protection (5 min)
+- Event Deduplication
+- app_mention + message Event Support
+- Optional: Bot Reply mit Job-ID
+
+#### Environment Variables:
+- SLACK_SIGNING_SECRET (required)
+- SLACK_BOT_TOKEN (optional, für Replies)
+
 #### Nächste Schritte:
-- Docker restart + Test
+- Docker rebuild + Tests
 - Commit + Push

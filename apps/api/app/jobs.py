@@ -42,6 +42,24 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def create_job_internal(title: str, payload: Optional[dict] = None, source: str = "api") -> dict:
+    """Create a job programmatically (for internal use, e.g., Slack intake)."""
+    job_id = str(uuid.uuid4())
+    now = _now_iso()
+    job = {
+        "id": job_id,
+        "title": title,
+        "status": "queued",
+        "created_at": now,
+        "updated_at": now,
+        "payload": payload,
+        "result": None,
+        "source": source,
+    }
+    _jobs[job_id] = job
+    return job
+
+
 @router.get("", response_model=list[JobOut])
 def list_jobs(user: dict = Depends(require_admin)):
     """List all jobs, newest first."""
