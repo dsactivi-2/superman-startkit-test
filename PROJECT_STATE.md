@@ -58,3 +58,24 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - Gepusht zu origin/main
 
 **Status: COMPLETE**
+
+---
+
+### 2026-01-18 - Web Login UI Session
+
+**Status: IN PROGRESS**
+
+#### Neue Dateien erstellt:
+- `apps/web/app/login/page.tsx` - Login-Formular mit Email/Passwort
+- `apps/web/app/page.tsx` - Login-Button hinzugefügt
+
+#### Features:
+- POST auf `/auth/login`
+- Token in localStorage unter "auth_token"
+- Redirect auf "/" nach Erfolg
+- Error-Handling mit Anzeige
+
+#### Nächste Schritte:
+- Docker rebuild
+- Tests (health + login page)
+- Commit + Push
