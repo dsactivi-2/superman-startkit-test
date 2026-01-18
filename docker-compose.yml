@@ -27,6 +27,8 @@ services:
       GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET}
       GITHUB_API_BASE: ${GITHUB_API_BASE:-https://api.github.com}
       ENABLE_TEST_ENDPOINTS: ${ENABLE_TEST_ENDPOINTS:-false}
+      MCP_SHARED_SECRET: ${MCP_SHARED_SECRET}
+      MCP_BASE_URL: http://mcp:3333
     ports:
       - "8000:8000"
     depends_on:
@@ -49,10 +51,28 @@ services:
       API_BASE_URL: http://api:8000
       MCP_SHARED_SECRET: ${MCP_SHARED_SECRET}
       MCP_ADMIN_TOKEN: ${MCP_ADMIN_TOKEN}
-    ports:
-      - "3333:3333"
+    expose:
+      - "3333"
     depends_on:
       - api
 
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ai-supervisor-openwebui
+    restart: unless-stopped
+    environment:
+      - WEBUI_AUTH=true
+      - WEBUI_NAME=AI Supervisor Control
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENABLE_OPENAI_API=true
+    volumes:
+      - openwebui_data:/app/backend/data
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - api
+      - mcp
+
 volumes:
   pgdata:
+  openwebui_data:
