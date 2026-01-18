@@ -28,7 +28,7 @@ export default function LoginPage() {
 
       const data = await res.json();
       localStorage.setItem("auth_token", data.token);
-      window.location.href = "/";
+      window.location.href = "/jobs";
     } catch (err: any) {
       setError(err?.message || "Unbekannter Fehler");
     } finally {

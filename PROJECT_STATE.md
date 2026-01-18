@@ -120,5 +120,34 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - `GET /jobs/{id}` → Job Detail
 - Ohne Token → 401 "Missing token"
 
+#### Commit + Push ✅
+- Commit: `df1cca5`
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
+
+---
+
+### 2026-01-18 - Jobs UI Session
+
+**Status: IN PROGRESS**
+
+#### Neue Dateien:
+- `apps/web/app/jobs/page.tsx` - Job Liste
+- `apps/web/app/jobs/[id]/page.tsx` - Job Detail mit Approve/Reject
+
+#### Features:
+- Token-Check (redirect zu /login wenn nicht eingeloggt)
+- Job Liste mit Status-Farben
+- "+ Demo Job" Button zum Testen
+- Job Detail mit Payload/Result Anzeige
+- Approve/Reject Buttons (nur bei status=needs_approval)
+- Login redirect zu /jobs statt /
+
+#### Tests ✅
+- `/health` → ok
+- `/jobs` → HTTP 200
+- Jobs-Seite lädt korrekt
+
 #### Nächste Schritte:
 - Commit + Push
