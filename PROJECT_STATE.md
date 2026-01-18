@@ -25,3 +25,36 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - Job States: queued/processing/completed/failed/needs-approval
 - Event Types: plan/question/needs-approval/progress/final/error
 - Error JSON format (siehe api_contract)
+
+---
+
+## AUTOMATION LOG
+
+### 2026-01-18 - MVP Setup Session
+
+**Status: IN PROGRESS**
+
+#### Schritt A-D: Dateien geprüft ✅
+- `apps/web/app/layout.tsx` - existiert, korrekt
+- `apps/api/app/auth.py` - existiert, Login mit SHA256, Rate Limiting
+- `apps/api/app/main.py` - auth_router eingebunden
+- `.env` - ADMIN_EMAIL, ADMIN_PASSWORD_HASH, JWT_SECRET gesetzt
+
+#### Schritt E: Docker Compose ✅
+- Command: `docker compose up --build -d`
+- Alle Container laufen: db, api, web
+
+#### Schritt F: Smoke Tests ✅
+- `/health` → `{"status":"ok"}`
+- `/version` → `{"version":"0.1.0"}`
+- `localhost:3000` → HTTP 200
+
+#### Schritt G: Login Test ✅
+- `POST /auth/login` → Token erhalten
+- Admin: admin@local.test / admin123
+
+#### Schritt H: Commit + Push
+- Code-Dateien committet (ohne .env)
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
