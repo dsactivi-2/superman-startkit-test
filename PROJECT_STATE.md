@@ -261,6 +261,76 @@ AI Supervisor Hybrid-Ops: Jobs via Slack starten, im Web überwachen, Approvals 
 - Signatur-Prüfung vor JSON-Parsing
 - Timeouts auf API Calls (10s)
 
-#### Nächste Schritte:
-- Docker rebuild + Tests
-- Commit + Push
+#### Tests ✅
+- Health: ok
+- Webhook ohne Secret: 500 "not configured"
+- Webhook korrekte Signatur: 200 + Job erstellt
+- Webhook falsche Signatur: 401 "Invalid signature"
+- Actions ohne App-Config: 500 "not configured"
+
+#### Commit + Push ✅
+- Commit: `89c2167`
+- Gepusht zu origin/main
+
+**Status: COMPLETE**
+
+---
+
+### 2026-01-18 - MCP Tool Server Session
+
+**Status: IN PROGRESS**
+
+#### Neue Dateien:
+- `apps/mcp/Dockerfile` - Python 3.12 + uvicorn
+- `apps/mcp/requirements.txt` - fastapi, httpx, sse-starlette
+- `apps/mcp/app/__init__.py` - Package Init
+- `apps/mcp/app/main.py` - MCP Server mit Tools + Confirm Flow
+- `DEPLOY/MCP_SETUP.md` - Setup Anleitung
+
+#### Geänderte Dateien:
+- `docker-compose.yml` - mcp Service hinzugefügt (Port 3333)
+- `.env.example` - MCP_SHARED_SECRET, MCP_ADMIN_TOKEN hinzugefügt
+
+#### Verfügbare Tools:
+| Tool | Typ | Beschreibung |
+|------|-----|--------------|
+| `jobs.list` | READ | Liste aller Jobs |
+| `jobs.get` | READ | Job Details |
+| `jobs.create` | WRITE | Job erstellen |
+| `jobs.approve` | WRITE | Job genehmigen |
+| `jobs.reject` | WRITE | Job ablehnen |
+| `jobs.set_needs_approval` | TEST | Status auf needs_approval setzen |
+| `slack.simulate_mention` | TEST | Slack Mention simulieren |
+
+#### 2-Step Confirm Flow:
+- READ Tools: sofortige Ausführung
+- WRITE/TEST Tools: Plan → confirm_token → Execute
+- Token TTL: 5 Minuten
+- Einmal-Verwendung
+
+#### Endpoints:
+- `GET /health` - Health Check (ohne Auth)
+- `GET /tools` - Tool Liste (mit X-MCP-SECRET)
+- `POST /run` - Tool ausführen (mit X-MCP-SECRET)
+
+#### Security:
+- Authentifizierung via X-MCP-SECRET Header
+- HMAC-Vergleich (constant-time)
+- Confirm Tokens sind tool-spezifisch
+- In-Memory Token Store (keine Persistenz)
+
+#### Tests ✅
+- [x] Health Check → `{"status":"ok","service":"mcp"}`
+- [x] Tool Liste → 7 Tools (3 READ, 2 WRITE, 2 TEST)
+- [x] READ Tool (jobs.list) → `{"status":"ok","result":[]}`
+- [x] WRITE Tool (2-step confirm):
+  - Step 1: Plan → `{"status":"plan","confirm_token":"..."}`
+  - Step 2: Confirm → `{"status":"ok","result":{"id":"..."}}`
+
+#### Bug Fix
+- `ToolResponse.result` Typ von `dict` auf `Any` geändert (für Listen-Results)
+
+#### Commit + Push
+- [ ] Ausstehend
+
+**Status: IN PROGRESS**

@@ -42,5 +42,17 @@ services:
     depends_on:
       - api
 
+  mcp:
+    build:
+      context: ./apps/mcp
+    environment:
+      API_BASE_URL: http://api:8000
+      MCP_SHARED_SECRET: ${MCP_SHARED_SECRET}
+      MCP_ADMIN_TOKEN: ${MCP_ADMIN_TOKEN}
+    ports:
+      - "3333:3333"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
